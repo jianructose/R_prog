@@ -1,0 +1,49 @@
+---
+title: "lec1"
+author: "JR"
+date: "15/09/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## What is included?
+- `readr::read_*` function to load a given rectangular, plain text data set into R
+- `<-` assignment symbol to assign values to objects in R
+- `readr::write_csv()` to write a df to a .csv file
+- `select`
+- `filter`
+- `mutate`
+- `arrange`
+- `desc`
+- `slice`
+- `pull`
+- `%in%`
+- `%>%` pipe operator to combine 2+ functions
+- What is "tidy data"? and what are pros and cons of the tidy data format?
+- How do you use `tidyr::pivot_wider` and `tidyr::pivot_longer` in R?
+
+
+
+```{r}
+library(tidyverse)
+can_lang1 <- read_csv("../ds_block1/523_r_prog/private_notes/data/can_lang.csv")
+head(can_lang1)
+```
+### How do you skip rows when reading in data? `read_csv(data="", skip=n)`
+
+```{r}
+can_lang2 <- read_csv("../ds_block1/523_r_prog/private_notes/data/can_lang-meta-data.csv", skip = 2, )
+head(can_lang2)
+```
+- to skip rows at the bottom, use `n_max=` argument.
+- to see the max line: in **terminal**: `wc -l FILEPATH`, `tail -n 10 FILEPATH`: print the last 10 lines of the file
+
+
+```{r}
+
+```
+
