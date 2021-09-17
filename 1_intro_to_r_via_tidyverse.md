@@ -1,7 +1,7 @@
 lec1
 ================
 JR
-Last compiled on Thu Sep 16 14:30:01 2021
+Last compiled on Thu Sep 16 19:46:27 2021
 
 ## What is included?
 
@@ -329,9 +329,7 @@ head(gapminder)
     ## 5 Afghanistan Asia       1972    36.1 13079460      740.
     ## 6 Afghanistan Asia       1977    38.4 14880372      786.
 
-1.  `select`, `filter` to subset cols and rows
-
-<!-- end list -->
+### 1\. `select`, `filter` to subset cols and rows
 
 ``` r
 # to limit df output to 10 rows
@@ -478,7 +476,10 @@ new_df <- gapminder %>%
   select(year, lifeExp)
 ```
 
-3.  `mutate`
+### 3\. `mutate` to make new variables.
+
+  - apply **vectorized functions** to columns. Vectorized funs take
+    vectors as input and return vectors of the same length as output.
 
 <!-- end list -->
 
@@ -505,6 +506,8 @@ gapminder %>%
     ## 10 Afghanist~ Asia       1997      42  2.22e7      635.    1.41e10        22227.
     ## # ... with 1,694 more rows
 
+### 4\. `arrange()` to order rows by values of a col or cols (low to high), use with `desc()` to order from high to low
+
 ``` r
 gapminder %>% 
   arrange(desc(lifeExp))
@@ -525,11 +528,115 @@ gapminder %>%
     ## 10 Israel           Asia       2007    80.7   6426679    25523.
     ## # ... with 1,694 more rows
 
+### 5\. `slice(.data, ...)` to index rows by position, `pull(.data, var = -1)` to extract column values as a vector. Choose by name or index
+
 ``` r
 gapminder %>% 
   arrange(desc(lifeExp)) %>% 
   slice(1) %>% 
-  pull(lifeExp)
+  pull(lifeExp,country,)
 ```
 
-    ## [1] 82.603
+    ##  Japan 
+    ## 82.603
+
+### 6\. what is **tidy data**??
+
+  - each variable is in its own col
+  - each obs, or case is in its own row
+
+### 7\. `tidyr::pivot_longer`
+
+``` r
+table4a
+```
+
+    ## # A tibble: 3 x 3
+    ##   country     `1999` `2000`
+    ## * <chr>        <int>  <int>
+    ## 1 Afghanistan    745   2666
+    ## 2 Brazil       37737  80488
+    ## 3 China       212258 213766
+
+``` r
+table4a %>% 
+  pivot_longer(cols = `1999`:`2000`, names_to="year", values_to = "cases")
+```
+
+    ## # A tibble: 6 x 3
+    ##   country     year   cases
+    ##   <chr>       <chr>  <int>
+    ## 1 Afghanistan 1999     745
+    ## 2 Afghanistan 2000    2666
+    ## 3 Brazil      1999   37737
+    ## 4 Brazil      2000   80488
+    ## 5 China       1999  212258
+    ## 6 China       2000  213766
+
+``` r
+# a less verbose and efficient way to specify this
+table4a %>% 
+pivot_longer(2:3, names_to="year", values_to="cases")
+```
+
+    ## # A tibble: 6 x 3
+    ##   country     year   cases
+    ##   <chr>       <chr>  <int>
+    ## 1 Afghanistan 1999     745
+    ## 2 Afghanistan 2000    2666
+    ## 3 Brazil      1999   37737
+    ## 4 Brazil      2000   80488
+    ## 5 China       1999  212258
+    ## 6 China       2000  213766
+
+``` r
+table4a %>% 
+gather(2:3, key="year", value="cases")
+```
+
+    ## # A tibble: 6 x 3
+    ##   country     year   cases
+    ##   <chr>       <chr>  <int>
+    ## 1 Afghanistan 1999     745
+    ## 2 Brazil      1999   37737
+    ## 3 China       1999  212258
+    ## 4 Afghanistan 2000    2666
+    ## 5 Brazil      2000   80488
+    ## 6 China       2000  213766
+
+### 8\. `pivot_wider(), spread(data, key, value, ...)`
+
+``` r
+table2
+```
+
+    ## # A tibble: 12 x 4
+    ##    country      year type            count
+    ##    <chr>       <int> <chr>           <int>
+    ##  1 Afghanistan  1999 cases             745
+    ##  2 Afghanistan  1999 population   19987071
+    ##  3 Afghanistan  2000 cases            2666
+    ##  4 Afghanistan  2000 population   20595360
+    ##  5 Brazil       1999 cases           37737
+    ##  6 Brazil       1999 population  172006362
+    ##  7 Brazil       2000 cases           80488
+    ##  8 Brazil       2000 population  174504898
+    ##  9 China        1999 cases          212258
+    ## 10 China        1999 population 1272915272
+    ## 11 China        2000 cases          213766
+    ## 12 China        2000 population 1280428583
+
+``` r
+table2 %>% 
+  spread(key=type, value = count)
+```
+
+    ## # A tibble: 6 x 4
+    ##   country      year  cases population
+    ##   <chr>       <int>  <int>      <int>
+    ## 1 Afghanistan  1999    745   19987071
+    ## 2 Afghanistan  2000   2666   20595360
+    ## 3 Brazil       1999  37737  172006362
+    ## 4 Brazil       2000  80488  174504898
+    ## 5 China        1999 212258 1272915272
+    ## 6 China        2000 213766 1280428583
