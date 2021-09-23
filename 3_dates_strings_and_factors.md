@@ -1,7 +1,7 @@
 3\_dates\_strings\_and\_factors
 ================
 JR
-Last compiled on Tue Sep 21 18:01:45 2021
+Last compiled on Wed Sep 22 11:30:30 2021
 
 ## 1\. Tibbles vs. Data Frames
 
@@ -47,3 +47,61 @@ group_by(example,a) %>%
 ```
 
     ## [1] "grouped_df" "tbl_df"     "tbl"        "data.frame"
+
+## 2\. Working with dates and times
+
+``` r
+library(lubridate)
+```
+
+    ## 
+    ## Attaching package: 'lubridate'
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     date, intersect, setdiff, union
+
+``` r
+today()
+```
+
+    ## [1] "2021-09-22"
+
+``` r
+class(today())
+```
+
+    ## [1] "Date"
+
+``` r
+now()
+```
+
+    ## [1] "2021-09-22 11:30:34 PDT"
+
+``` r
+class(now())
+```
+
+    ## [1] "POSIXct" "POSIXt"
+
+### 2.1 Parse date-times (convert strings or numbers to date-times) `ymd(), ydm(), myd(), mdy(), dmy(), dym(), yq()`
+
+``` r
+# from string to datetimes
+ymd("20210922")
+```
+
+    ## [1] "2021-09-22"
+
+``` r
+mdy("Sep 22 2021")
+```
+
+    ## [1] "2021-09-22"
+
+``` r
+dmy("22th of Sep '21")
+```
+
+    ## [1] "2021-09-22"
