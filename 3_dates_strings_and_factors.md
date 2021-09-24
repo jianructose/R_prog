@@ -1,7 +1,7 @@
 3\_dates\_strings\_and\_factors
 ================
 JR
-Last compiled on Wed Sep 22 23:42:40 2021
+Last compiled on Thu Sep 23 18:55:49 2021
 
 ## 1\. Tibbles vs. Data Frames
 
@@ -67,7 +67,7 @@ library(lubridate)
 today()
 ```
 
-    ## [1] "2021-09-22"
+    ## [1] "2021-09-23"
 
 ``` r
 class(today())
@@ -79,7 +79,7 @@ class(today())
 now()
 ```
 
-    ## [1] "2021-09-22 23:42:41 PDT"
+    ## [1] "2021-09-23 18:55:58 PDT"
 
 ``` r
 class(now())
@@ -201,7 +201,7 @@ datetime <- now()
 date(datetime)
 ```
 
-    ## [1] "2021-09-22"
+    ## [1] "2021-09-23"
 
 ``` r
 year(datetime) 
@@ -231,52 +231,52 @@ month(datetime)
 day(datetime)
 ```
 
-    ## [1] 22
+    ## [1] 23
 
 ``` r
 # day of a week
 paste0("Today is ", wday(datetime, abbr = F, label = T, week_start = 1))
 ```
 
-    ## [1] "Today is Wednesday"
+    ## [1] "Today is Thursday"
 
 ``` r
 # day of a quarter
 qday(datetime)
 ```
 
-    ## [1] 84
+    ## [1] 85
 
 ``` r
 # day in a month
 mday(datetime)
 ```
 
-    ## [1] 22
+    ## [1] 23
 
 ``` r
 paste0("Today is the ",yday(datetime), "th day of the year!")
 ```
 
-    ## [1] "Today is the 265th day of the year!"
+    ## [1] "Today is the 266th day of the year!"
 
 ``` r
 hour(datetime)
 ```
 
-    ## [1] 23
+    ## [1] 18
 
 ``` r
 minute(datetime)
 ```
 
-    ## [1] 42
+    ## [1] 55
 
 ``` r
 second(datetime)
 ```
 
-    ## [1] 42.16242
+    ## [1] 58.90303
 
 ``` r
 print(paste0("It is the ", week(datetime),"th week of the year!"))
@@ -318,17 +318,17 @@ leap_year(datetime)
 update(datetime)
 ```
 
-    ## [1] "2021-09-22 23:42:42 PDT"
+    ## [1] "2021-09-23 18:55:58 PDT"
 
 ``` r
 datetime
 ```
 
-    ## [1] "2021-09-22 23:42:42 PDT"
+    ## [1] "2021-09-23 18:55:58 PDT"
 
 ## 3\. String manipulations(`stringr, tidyr,`)
 
-### 3.1 `str_detect(), str_subset()`
+### 3.1 Detect Matches and Subset Strings`str_detect(), str_subset()`
 
 ``` r
 fruit
@@ -467,7 +467,7 @@ my_fruit
     ## [4] "AAAAfruit"         "AAAAow kiwi fruit" "AAAAionfruit"     
     ## [7] "AAAA fruit"        "AAAA fruit"
 
-### 3.2 Join and Split `str_c(), str_c(..., collapse="")`
+### 3.2 Join and Split `str_c(), str_c(..., collapse=""),`
 
 ``` r
 head(fruit) %>% 
@@ -495,5 +495,94 @@ str_c(fruit[5:8], fruit[1:4], sep = "4", collapse = "99")
     ## [1] "bell pepper4apple99bilberry4apricot99blackberry4avocado99blackcurrant4banana"
 
 ``` r
-# sep = 
+# sep connects btwn vectors, collapse connects all vec into a single one
 ```
+
+How to concatenate char vectors when in df
+
+``` r
+tibble(x = fruit[22:27], y = fruit[30:35]) %>% 
+  unite(col = "mixed flavor", x, y, remove = F, sep = " + ")
+```
+
+    ## # A tibble: 6 x 3
+    ##   `mixed flavor`      x           y         
+    ##   <chr>               <chr>       <chr>     
+    ## 1 cucumber + feijoa   cucumber    feijoa    
+    ## 2 currant + fig       currant     fig       
+    ## 3 damson + goji berry damson      goji berry
+    ## 4 date + gooseberry   date        gooseberry
+    ## 5 dragonfruit + grape dragonfruit grape     
+    ## 6 durian + grapefruit durian      grapefruit
+
+### 3.3 Mutate Strings `str_sub(), str_replace(), str_replace_na(), tidyr::replace_na()`
+
+``` r
+fruit %>% 
+  str_subset("fruit") %>% 
+  str_replace("fruit", "vege")
+```
+
+    ## [1] "breadvege"   "dragonvege"  "grapevege"   "jackvege"    "kiwi vege"  
+    ## [6] "passionvege" "star vege"   "ugli vege"
+
+## 4\. Examples with gapminder
+
+``` r
+library(gapminder)
+slice_head(gapminder, n = 6)
+```
+
+    ## # A tibble: 6 x 6
+    ##   country     continent  year lifeExp      pop gdpPercap
+    ##   <fct>       <fct>     <int>   <dbl>    <int>     <dbl>
+    ## 1 Afghanistan Asia       1952    28.8  8425333      779.
+    ## 2 Afghanistan Asia       1957    30.3  9240934      821.
+    ## 3 Afghanistan Asia       1962    32.0 10267083      853.
+    ## 4 Afghanistan Asia       1967    34.0 11537966      836.
+    ## 5 Afghanistan Asia       1972    36.1 13079460      740.
+    ## 6 Afghanistan Asia       1977    38.4 14880372      786.
+
+### How many countries have name starting from “Al”?
+
+``` r
+gapminder %>% 
+  filter(str_detect(country, "^Al")) %>% 
+  select(1) %>% 
+  distinct() %>% 
+  nrow()
+```
+
+    ## [1] 2
+
+### How many country names end in *tan*?
+
+``` r
+gapminder %>% 
+  select(1) %>% 
+  filter(str_detect(country, "tan$")) %>% 
+  distinct()
+```
+
+    ## # A tibble: 2 x 1
+    ##   country    
+    ##   <fct>      
+    ## 1 Afghanistan
+    ## 2 Pakistan
+
+### What are countries contain “, Dem. Rep.”
+
+``` r
+gapminder %>% 
+  filter(str_detect(country, "\\, Dem. Rep.")) %>% 
+  distinct(country) %>% 
+  mutate(country = str_replace(country,
+                               "\\, Dem. Rep.",
+                               " Democratic Republic"))
+```
+
+    ## # A tibble: 2 x 1
+    ##   country                  
+    ##   <chr>                    
+    ## 1 Congo Democratic Republic
+    ## 2 Korea Democratic Republic
