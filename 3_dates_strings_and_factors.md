@@ -1,7 +1,7 @@
 3\_dates\_strings\_and\_factors
 ================
 JR
-Last compiled on Thu Sep 23 18:55:49 2021
+Last compiled on Sat Sep 25 17:04:29 2021
 
 ## 1\. Tibbles vs. Data Frames
 
@@ -67,7 +67,7 @@ library(lubridate)
 today()
 ```
 
-    ## [1] "2021-09-23"
+    ## [1] "2021-09-25"
 
 ``` r
 class(today())
@@ -79,7 +79,7 @@ class(today())
 now()
 ```
 
-    ## [1] "2021-09-23 18:55:58 PDT"
+    ## [1] "2021-09-25 17:04:35 PDT"
 
 ``` r
 class(now())
@@ -201,7 +201,7 @@ datetime <- now()
 date(datetime)
 ```
 
-    ## [1] "2021-09-23"
+    ## [1] "2021-09-25"
 
 ``` r
 year(datetime) 
@@ -231,58 +231,58 @@ month(datetime)
 day(datetime)
 ```
 
-    ## [1] 23
+    ## [1] 25
 
 ``` r
 # day of a week
 paste0("Today is ", wday(datetime, abbr = F, label = T, week_start = 1))
 ```
 
-    ## [1] "Today is Thursday"
+    ## [1] "Today is Saturday"
 
 ``` r
 # day of a quarter
 qday(datetime)
 ```
 
-    ## [1] 85
+    ## [1] 87
 
 ``` r
 # day in a month
 mday(datetime)
 ```
 
-    ## [1] 23
+    ## [1] 25
 
 ``` r
 paste0("Today is the ",yday(datetime), "th day of the year!")
 ```
 
-    ## [1] "Today is the 266th day of the year!"
+    ## [1] "Today is the 268th day of the year!"
 
 ``` r
 hour(datetime)
 ```
 
-    ## [1] 18
+    ## [1] 17
 
 ``` r
 minute(datetime)
 ```
 
-    ## [1] 55
+    ## [1] 4
 
 ``` r
 second(datetime)
 ```
 
-    ## [1] 58.90303
+    ## [1] 36.26992
 
 ``` r
 print(paste0("It is the ", week(datetime),"th week of the year!"))
 ```
 
-    ## [1] "It is the 38th week of the year!"
+    ## [1] "It is the 39th week of the year!"
 
 ``` r
 quarter(datetime)
@@ -318,13 +318,13 @@ leap_year(datetime)
 update(datetime)
 ```
 
-    ## [1] "2021-09-23 18:55:58 PDT"
+    ## [1] "2021-09-25 17:04:36 PDT"
 
 ``` r
 datetime
 ```
 
-    ## [1] "2021-09-23 18:55:58 PDT"
+    ## [1] "2021-09-25 17:04:36 PDT"
 
 ## 3\. String manipulations(`stringr, tidyr,`)
 
@@ -586,3 +586,233 @@ gapminder %>%
     ##   <chr>                    
     ## 1 Congo Democratic Republic
     ## 2 Korea Democratic Republic
+
+### Extract matches`str_extract(), str_extract_all()`
+
+``` r
+typeof(sentences)
+```
+
+    ## [1] "character"
+
+``` r
+head(sentences)
+```
+
+    ## [1] "The birch canoe slid on the smooth planks." 
+    ## [2] "Glue the sheet to the dark blue background."
+    ## [3] "It's easy to tell the depth of a well."     
+    ## [4] "These days a chicken leg is a rare dish."   
+    ## [5] "Rice is often served in round bowls."       
+    ## [6] "The juice of lemons makes fine punch."
+
+``` r
+colors <- "red|yellow|pink|green|purple|blue|orange"
+
+# to see how many color matches
+sum(!is.na(str_extract(string = sentences, pattern = colors)))
+```
+
+    ## [1] 59
+
+``` r
+# it returns a list
+str_extract_all(string = sentences, pattern = colors) %>% 
+  head()
+```
+
+    ## [[1]]
+    ## character(0)
+    ## 
+    ## [[2]]
+    ## [1] "blue"
+    ## 
+    ## [[3]]
+    ## character(0)
+    ## 
+    ## [[4]]
+    ## character(0)
+    ## 
+    ## [[5]]
+    ## character(0)
+    ## 
+    ## [[6]]
+    ## character(0)
+
+``` r
+# extract n. from sentences
+noun <- "(a|the) ([^ ]+)"
+
+(str_match_all(sentences, noun)) %>% 
+  head()
+```
+
+    ## [[1]]
+    ##      [,1]         [,2]  [,3]    
+    ## [1,] "the smooth" "the" "smooth"
+    ## 
+    ## [[2]]
+    ##      [,1]        [,2]  [,3]   
+    ## [1,] "the sheet" "the" "sheet"
+    ## [2,] "the dark"  "the" "dark" 
+    ## 
+    ## [[3]]
+    ##      [,1]        [,2]  [,3]   
+    ## [1,] "the depth" "the" "depth"
+    ## [2,] "a well."   "a"   "well."
+    ## 
+    ## [[4]]
+    ##      [,1]        [,2] [,3]     
+    ## [1,] "a chicken" "a"  "chicken"
+    ## [2,] "a rare"    "a"  "rare"   
+    ## 
+    ## [[5]]
+    ##      [,1] [,2] [,3]
+    ## 
+    ## [[6]]
+    ##      [,1] [,2] [,3]
+
+## 5\. Factor inspection
+
+``` r
+str(gapminder$continent)
+```
+
+    ##  Factor w/ 5 levels "Africa","Americas",..: 3 3 3 3 3 3 3 3 3 3 ...
+
+``` r
+levels(gapminder$continent)
+```
+
+    ## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
+
+``` r
+nlevels(gapminder$continent)
+```
+
+    ## [1] 5
+
+``` r
+class(gapminder$continent)
+```
+
+    ## [1] "factor"
+
+``` r
+gapminder$continent %>% 
+  head()
+```
+
+    ## [1] Asia Asia Asia Asia Asia Asia
+    ## Levels: Africa Americas Asia Europe Oceania
+
+## 1\. Drop unused levels
+
+``` r
+nlevels(gapminder$country)
+```
+
+    ## [1] 142
+
+``` r
+h_countries <- gapminder %>% 
+  filter(country %in% c("Egypt", "Haiti", "Romania", "Thailand", "Venezuela"))
+
+h_countries
+```
+
+    ## # A tibble: 60 x 6
+    ##    country continent  year lifeExp      pop gdpPercap
+    ##    <fct>   <fct>     <int>   <dbl>    <int>     <dbl>
+    ##  1 Egypt   Africa     1952    41.9 22223309     1419.
+    ##  2 Egypt   Africa     1957    44.4 25009741     1459.
+    ##  3 Egypt   Africa     1962    47.0 28173309     1693.
+    ##  4 Egypt   Africa     1967    49.3 31681188     1815.
+    ##  5 Egypt   Africa     1972    51.1 34807417     2024.
+    ##  6 Egypt   Africa     1977    53.3 38783863     2785.
+    ##  7 Egypt   Africa     1982    56.0 45681811     3504.
+    ##  8 Egypt   Africa     1987    59.8 52799062     3885.
+    ##  9 Egypt   Africa     1992    63.7 59402198     3795.
+    ## 10 Egypt   Africa     1997    67.2 66134291     4173.
+    ## # ... with 50 more rows
+
+``` r
+nlevels(h_countries$country)
+```
+
+    ## [1] 142
+
+``` r
+h_countries$country %>% 
+  fct_drop() %>% 
+  nlevels
+```
+
+    ## [1] 5
+
+## 2\. Change the order of levels
+
+``` r
+gapminder$continent %>% 
+  levels()
+```
+
+    ## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
+
+``` r
+gapminder$continent %>% 
+  fct_infreq() %>% 
+  levels()
+```
+
+    ## [1] "Africa"   "Asia"     "Europe"   "Americas" "Oceania"
+
+``` r
+gap2 <- gapminder %>% 
+  mutate(continent = fct_infreq(continent))
+gap2$continent %>% 
+  levels()
+```
+
+    ## [1] "Africa"   "Asia"     "Europe"   "Americas" "Oceania"
+
+``` r
+# or reverse freq
+gap2$continent %>% 
+  fct_rev() %>% 
+  levels()
+```
+
+    ## [1] "Oceania"  "Americas" "Europe"   "Asia"     "Africa"
+
+## 3\. Reorder levels by their relationship w/ another variable `fct_reorder()`
+
+``` r
+#  reorder countries by median lifeExp ascending
+fct_reorder(gapminder$country, gapminder$lifeExp) %>% 
+  levels() %>% 
+  head()
+```
+
+    ## [1] "Sierra Leone"  "Guinea-Bissau" "Afghanistan"   "Angola"       
+    ## [5] "Somalia"       "Guinea"
+
+``` r
+# reorder by min lifeExp
+fct_reorder(gapminder$country, gapminder$lifeExp, min) %>% 
+  levels() %>% 
+  head()
+```
+
+    ## [1] "Rwanda"       "Afghanistan"  "Gambia"       "Angola"       "Sierra Leone"
+    ## [6] "Cambodia"
+
+## 4\. Manually reorder factor levels
+
+``` r
+gapminder$continent %>% 
+  fct_relevel("Asia", "Africa") %>% 
+  levels()
+```
+
+    ## [1] "Asia"     "Africa"   "Americas" "Europe"   "Oceania"
